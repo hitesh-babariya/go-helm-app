@@ -1,17 +1,13 @@
-name: Build and Deploy Go App with Helm
+name: Build and Deploy Go App to Minikube with Helm
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
+    runs-on: self-hosted
 
     steps:
       - name: Checkout code
@@ -20,32 +16,23 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24"
+          go-version: "1.24.5"
 
       - name: Run tests
         run: go test ./...
 
-      - name: Login to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - name: Set Docker Env to Minikube
+        run: |
+          echo "Configuring Docker to use Minikube engine..."
+          minikube -p minikube docker-env | Invoke-Expression
 
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/go-app:${{ github.sha }} .
+          docker build -t go-app:${{ github.sha }} .
 
-      - name: Push Docker image
-        run: |
-          docker push ghcr.io/${{ github.repository_owner }}/go-app:${{ github.sha }}
-
-      - name: Install Helm
-        uses: azure/setup-helm@v4
-
-      - name: Configure Kubernetes
-        run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG_DATA }}" > $HOME/.kube/config
-
-      - name: Deploy with Helm
+      - name: Helm Deploy
         run: |
           helm upgrade --install go-app ./helm/go-app \
-            --set image.repository=ghcr.io/${{ github.repository_owner }}/go-app \
-            --set image.tag=${{ github.sha }}
+            --set image.repository=go-app \
+            --set image.tag=${{ github.sha }} \
+            --set image.pullPolicy=Never
