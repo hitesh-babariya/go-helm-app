@@ -44,3 +44,4 @@ jobs:
             --set image.repository=go-app `
             --set image.tag=${{ github.sha }} `
             --set image.pullPolicy=Never
+            
