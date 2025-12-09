@@ -33,7 +33,7 @@ jobs:
         # THis code is for helm running via Docker
       - name: Helm Deploy (Dockerized)
         shell: powershell
-        run: docker run --rm -v ${PWD}.Path:/apps -v $env:USERPROFILE\.kube:/root/.kube -v $env:USERPROFILE\.minikube:/root/.minikube -w /apps alpine/helm:3.12.0 upgrade --install go-app ./helm/go-app --set image.repository=go-app --set image.tag=${{ github.sha }} --set image.pullPolicy=Never
+        run: docker run --rm -v "$PWD":/apps -v "$env:USERPROFILE\.kube":/root/.kube -v "$env:USERPROFILE\.minikube":/root/.minikube -w /apps alpine/helm:3.12.0 upgrade --install go-app ./helm/go-app --set image.repository=go-app --set image.tag=${{ github.sha }} --set image.pullPolicy=Never
 
 
 
