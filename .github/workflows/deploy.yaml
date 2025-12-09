@@ -43,7 +43,7 @@ jobs:
             upgrade --install go-app ./helm/go-app `
               --set image.repository=go-app `
               --set image.tag=${{ github.sha }} `
-              --set image.pullPolicy=Never
+              --set image.pullPolicy=Never 
 
 
 
