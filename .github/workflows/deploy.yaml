@@ -31,7 +31,7 @@ jobs:
           docker build -t go-app:${{ github.sha }} .
 
       - name: Helm Deploy
-        shell: pwsh
+        shell: powershell
         run: |
           helm upgrade --install go-app ./helm/go-app `
           --set image.repository=go-app `
