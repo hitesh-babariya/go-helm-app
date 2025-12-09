@@ -35,8 +35,8 @@ jobs:
         shell: powershell
         run: |
           docker run --rm `
-          -v "$($env:USERPROFILE)\.kube:/root/.kube:ro" `
-          -v "$($env:USERPROFILE)\.minikube:/root/.minikube:ro" `
+          -v "\.kube:/root/.kube:ro" `
+          -v "\.minikube:/root/.minikube:ro" `
           -v "$(pwd):/apps" `
           -w /apps `
           alpine/helm:3.12.0 `
@@ -44,4 +44,3 @@ jobs:
             --set image.repository=go-app `
             --set image.tag=${{ github.sha }} `
             --set image.pullPolicy=Never
-            
